@@ -17,6 +17,8 @@ class _LoginPageState extends State<LoginPage> {
   // 2. Instance helper untuk koneksi ke API
   final LoginHelper loginHelper = LoginHelper();
 
+ 
+
   // 3. Variable status loading
   bool isLoading = false;
 
@@ -32,7 +34,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Login Dulu Ky'),
+        title: const Text('Login Dulu Kuy'),
         backgroundColor: Colors.blueAccent, // Hiasan sedikit
         foregroundColor: Colors.white,
       ),
@@ -113,6 +115,7 @@ class _LoginPageState extends State<LoginPage> {
                             backgroundColor: Colors.green,
                           ),
                         );
+                          Navigator.pushReplacementNamed(context, '/dashboard');
 
                         // --- PINDAH HALAMAN (Navigasi) ---
                         // Navigator.pushReplacement(

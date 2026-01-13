@@ -1,33 +1,40 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import '../helper/absensi_helper.dart';
 
-class AbsensiPage extends StatefulWidget {
-  const AbsensiPage({super.key});
+
+class AbsensiFormPage extends StatefulWidget {
+  final bool isMasuk; // true = masuk, false = keluar
+
+  const AbsensiFormPage({super.key, required this.isMasuk});
 
   @override
-  State<AbsensiPage> createState() => _AbsensiPageState();
+  State<AbsensiFormPage> createState() => _AbsensiFormPageState();
 }
 
-class _AbsensiPageState extends State<AbsensiPage> {
+class _AbsensiFormPageState extends State<AbsensiFormPage> {
+  File? fotoSelfie;
+  File? fotoAktivitas;
+
   String jamSekarang = "";
-  String message = "";
-  bool success = false;
   Timer? timer;
+  bool loading = false;
 
   @override
   void initState() {
     super.initState();
     _updateJam();
-    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    timer = Timer.periodic(const Duration(seconds: 1), (_) {
       _updateJam();
     });
   }
 
   void _updateJam() {
     setState(() {
-      jamSekarang = DateFormat('hh:mm a').format(DateTime.now());
+      jamSekarang = DateFormat('HH:mm:ss').format(DateTime.now());
     });
   }
 
@@ -37,121 +44,143 @@ class _AbsensiPageState extends State<AbsensiPage> {
     super.dispose();
   }
 
-  Future<void> absenMasuk() async {
-    final result = await AbsensiHelper.absenMasuk();
+  Future<void> ambilFoto(bool selfie) async {
+    final picker = ImagePicker();
+    final XFile? file = await picker.pickImage(
+      source: ImageSource.camera,
+      imageQuality: 70,
+    );
+
+    if (file == null) return;
 
     setState(() {
-      success = result['success'] ?? false;
-      message = result['message'] ?? "Gagal melakukan absensi";
+      if (selfie) {
+        fotoSelfie = File(file.path);
+      } else {
+        fotoAktivitas = File(file.path);
+      }
     });
+  }
+
+  Future<void> submit() async {
+    if (fotoSelfie == null || fotoAktivitas == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Foto selfie & aktivitas wajib")),
+      );
+      return;
+    }
+
+    setState(() => loading = true);
+
+    try {
+      if (widget.isMasuk) {
+        await AbsensiHelper.absenMasuk(
+          fotoSelfie: fotoSelfie!,
+          fotoAktivitas: fotoAktivitas!,
+        );
+      } else {
+        await AbsensiHelper.absenKeluar(
+           fotoSelfie: fotoSelfie!,
+          fotoAktivitas: fotoAktivitas!,
+        );
+      }
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              widget.isMasuk
+                  ? "Absen masuk berhasil"
+                  : "Absen keluar berhasil",
+            ),
+          ),
+        );
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
+    } finally {
+      setState(() => loading = false);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Absensi"),
-        backgroundColor: Colors.blue,
-        foregroundColor: Colors.white,
+        title: Text(widget.isMasuk ? "Absen Masuk" : "Absen Keluar"),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 20),
-
             /// JAM
-            Text(
-              "Jam $jamSekarang",
-              style: const TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
+            Center(
+              child: Text(
+                jamSekarang,
+                style: const TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
 
             const SizedBox(height: 30),
 
-            /// ABSEN MASUK
-            SizedBox(
-              width: double.infinity,
-              height: 55,
-              child: ElevatedButton.icon(
-                icon: const Icon(Icons.check_circle),
-                label: const Text(
-                  "ABSEN MASUK",
-                  style: TextStyle(fontSize: 16),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                ),
-                onPressed: absenMasuk,
-              ),
-            ),
-
-            const SizedBox(height: 15),
-
-            /// ABSEN PULANG 
-            SizedBox(
-              width: double.infinity,
-              height: 55,
-              child: ElevatedButton.icon(
-                icon: const Icon(Icons.home),
-                label: const Text(
-                  "ABSEN PULANG",
-                  style: TextStyle(fontSize: 16),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                ),
-                onPressed: () {},
-              ),
-            ),
-
-            const SizedBox(height: 25),
-
-            /// NOTIFIKASI
-            if (message.isNotEmpty)
-              Container(
+            /// FOTO SELFIE
+            Text("Foto Selfie"),
+            const SizedBox(height: 8),
+            GestureDetector(
+              onTap: () => ambilFoto(true),
+              child: Container(
+                height: 180,
                 width: double.infinity,
-                padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: success
-                      ? Colors.green.shade50
-                      : Colors.red.shade50,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    color: success ? Colors.green : Colors.red,
-                  ),
+                  border: Border.all(),
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                child: Row(
-                  children: [
-                    Icon(
-                      success ? Icons.check_circle : Icons.error,
-                      color: success ? Colors.green : Colors.red,
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        success
-                            ? "Berhasil! Anda telah absen masuk."
-                            : message,
-                        style: TextStyle(
-                          color:
-                              success ? Colors.green : Colors.red,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                child: fotoSelfie == null
+                    ? const Center(child: Icon(Icons.camera_alt, size: 40))
+                    : Image.file(fotoSelfie!, fit: BoxFit.cover),
               ),
+            ),
+
+            const SizedBox(height: 20),
+
+            /// FOTO AKTIVITAS
+            Text("Foto Aktivitas Kerja"),
+            const SizedBox(height: 8),
+            GestureDetector(
+              onTap: () => ambilFoto(false),
+              child: Container(
+                height: 180,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  border: Border.all(),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: fotoAktivitas == null
+                    ? const Center(child: Icon(Icons.camera, size: 40))
+                    : Image.file(fotoAktivitas!, fit: BoxFit.cover),
+              ),
+            ),
+
+            const SizedBox(height: 30),
+
+            /// BUTTON SIMPAN
+            SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: ElevatedButton(
+                onPressed: loading ? null : submit,
+                child: loading
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : Text(widget.isMasuk ? "ABSEN MASUK" : "ABSEN KELUAR"),
+              ),
+            ),
           ],
         ),
       ),

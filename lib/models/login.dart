@@ -3,24 +3,15 @@ import 'dart:convert';
 
 class Login {
   final String? token;
-  final UserDetail? user;
+  final UserAbsen user;
 
-Login({this.token, this.user});
+Login({required this.token, required this.user});
 factory Login.fromJson(Map<String, dynamic> json){
   return Login(
     token: json['token'],
-    user: json['user'] != null ? UserDetail.fromJson(json['user']):null,
+    user: UserAbsen.fromJson(json['user']),
   );
 }
 }
 
-  class UserDetail{
-    final int? id;
-    final String? username;
-
-    UserDetail({this.id, this.username});
-    factory UserDetail.fromJson(Map<String, dynamic> json){
-      return UserDetail(username: json['user'],);
-    }
-  }
 

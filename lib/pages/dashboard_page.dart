@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:absensi_karyawan/pages/absensi_page.dart';
+import 'package:absensi_karyawan/secreens/riwayat_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -93,6 +95,65 @@ class _DashboardPageState extends State<DashboardPage> {
 
                 const Spacer(),
                 
+                Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: data.jamMasuk == null 
+                          ? () {
+                            Navigator.push(
+                              context,
+                            MaterialPageRoute(
+                              builder: (_) => const AbsensiFormPage(isMasuk: true),
+                              ),
+                              ).then((_) {
+                                setState(() {
+                                  statusFuture = fetchStatus();
+                                });
+                              });
+                        }
+                        : null,
+                        child: const Text('Absen Masuk'),
+                        ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: (data.jamMasuk != null && data.jamKeluar == null) 
+                            ? () {
+                              Navigator.push(
+                                context, MaterialPageRoute(
+                                  builder: (_) => const AbsensiFormPage(isMasuk: false),
+                                  ),
+                                  ).then((_) {
+                                    setState(() {
+                                      statusFuture = fetchStatus();
+                                    });
+                                  });
+                            }
+                            : null,
+                            child: const Text('Absen Keluar'),
+                            ),
+                          ),
+                  ],
+                ),
+
+                const SizedBox(height: 10),
+
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context, 
+                        MaterialPageRoute(
+                          builder: (_) => const RiwayatScreen(),
+                          ),
+                        );
+                      },
+                    child: const Text('Lihat Riwayat'),
+                  ),
+                ),
               ],
             ),
           );

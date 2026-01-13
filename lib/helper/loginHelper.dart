@@ -21,16 +21,18 @@ class LoginHelper {
       final bales = await xubin.post(
         uri,
         headers: _header,
+        
         body: jsonEncode({
           'Username': username,
           'PasswordHash': passwordHash,
         }),
       );
 
-      if (bales.statusCode == 200) {
+
+      if(bales.statusCode == 200){
         print("cek hasil api: ${bales.body}");
         final data = jsonDecode(bales.body);
-        await storage.write(key: 'token', value: data['token']);
+        await storage.write(key: 'token', value: data['token'].toString(),);
         return Login.fromJson(data);
       } else {
         print("Login gagal: ${bales.body}");
