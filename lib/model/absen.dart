@@ -8,6 +8,8 @@ class Absensi {
   final DateTime? jamKeluar;
   final String riwayatAbsensi;
   final String status;
+  final String fotoSelfie;
+  final String fotoAktivitas;
 
   const Absensi({
     required this.id,
@@ -16,6 +18,8 @@ class Absensi {
     required this.jamKeluar,
     required this.riwayatAbsensi,
     required this.status,
+    required this.fotoSelfie,
+    required this.fotoAktivitas,
   });
       factory Absensi.fromJson(Map<String, dynamic> json){
         return Absensi(id: json['id'],
@@ -24,6 +28,8 @@ class Absensi {
         jamKeluar: json['jamKeluar'] != null ? DateTime.parse(json['jamKeluar']): null,
         riwayatAbsensi: json['riwayatAbsensi'],
         status: json['status'],
+        fotoSelfie: json['fotoSelfie'],
+        fotoAktivitas: json['fotoAktivitas'],
         );
       }
 }
