@@ -2,54 +2,25 @@ import 'user.dart';// ignore_for_file: public_member_api_docs, sort_constructors
 import 'dart:convert';
 
 class Login {
-  final String token;
-  final UserAbsen user;
+  final String? token;
+  final UserDetail? user;
 
-  const Login({
-    required this.token,
-    required this.user
-  });
-
-  Login copyWith({
-    String? token,
-    UserAbsen? user,
-  }) {
-    return Login(
-      token: token ?? this.token,
-      user: user ?? this.user,
-    );
-  }
-
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'token': token,
-      'user': user.toMap(),
-    };
-  }
-
-  factory Login.fromMap(Map<String, dynamic> map) {
-    return Login(
-      token: (map["token"] ?? '') as String,
-      user: UserAbsen.fromMap((map["user"]?? Map<String,dynamic>.from({})) as Map<String,dynamic>),
-    );
-  }
-
-  String toJson() => json.encode(toMap());
-
-  factory Login.fromJson(String source) => Login.fromMap(json.decode(source) as Map<String, dynamic>);
-
-  @override
-  String toString() => 'Login(token: $token, user: $user)';
-
-  @override
-  bool operator ==(covariant Login other) {
-    if (identical(this, other)) return true;
-  
-    return 
-      other.token == token &&
-      other.user == user;
-  }
-
-  @override
-  int get hashCode => token.hashCode ^ user.hashCode;
+Login({this.token, this.user});
+factory Login.fromJson(Map<String, dynamic> json){
+  return Login(
+    token: json['token'],
+    user: json['user'] != null ? UserDetail.fromJson(json['user']):null,
+  );
 }
+}
+
+  class UserDetail{
+    final int? id;
+    final String? username;
+
+    UserDetail({this.id, this.username});
+    factory UserDetail.fromJson(Map<String, dynamic> json){
+      return UserDetail(username: json['user'],);
+    }
+  }
+

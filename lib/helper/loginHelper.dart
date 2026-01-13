@@ -22,6 +22,7 @@ class LoginHelper{
       );
 
       if(bales.statusCode == 200){
+        print("cek hasil api: ${bales.body}");
         final data = jsonDecode(bales.body);
 
         await storage.write(key: 'token', value: data['token']);
