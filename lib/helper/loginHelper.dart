@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as xubin;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:absensi_karyawan/model/login.dart';
+import '../models/login.dart';
 
 class LoginHelper {
   static const String myuri =
@@ -22,12 +22,13 @@ class LoginHelper {
         uri,
         headers: _header,
         body: jsonEncode({
-          'username': username,
-          'password': passwordHash,
+          'Username': username,
+          'PasswordHash': passwordHash,
         }),
       );
 
       if (bales.statusCode == 200) {
+        print("cek hasil api: ${bales.body}");
         final data = jsonDecode(bales.body);
         await storage.write(key: 'token', value: data['token']);
         return Login.fromJson(data);

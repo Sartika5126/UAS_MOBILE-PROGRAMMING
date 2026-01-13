@@ -109,7 +109,7 @@ class _LoginPageState extends State<LoginPage> {
 
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text('Login berhasil! Halo, ${loginRequest.user.username}'),
+                            content: Text('Login berhasil!'),
                             backgroundColor: Colors.green,
                           ),
                         );
