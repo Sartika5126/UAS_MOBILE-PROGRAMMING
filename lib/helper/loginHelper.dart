@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as xubin;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import '/model/login.dart';
+import '/models/login.dart';
 
 class LoginHelper{
   static const String myuri= 'https://thioacetic-unreticently-saul.ngrok-free.dev/yunisafa';
@@ -27,7 +27,7 @@ class LoginHelper{
         print("cek hasil api: ${bales.body}");
         final data = jsonDecode(bales.body);
 
-        await storage.write(key: 'token', value: data['token']);
+        await storage.write(key: 'token', value: data['token'].toString(),);
         return Login.fromJson(data);
       }else{
         print ("Hahaha gagal: ${bales.body}");

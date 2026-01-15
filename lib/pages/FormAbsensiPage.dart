@@ -5,16 +5,17 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import '../helper/absensi_helper.dart';
 
-class AbsensiFormPage extends StatefulWidget {
-  final bool isMasuk; // true = masuk, false = keluar
+class FormAbsensiPage extends StatefulWidget {
+  final bool isMasuk;
+   // true = masuk, false = keluar
 
-  const AbsensiFormPage({super.key, required this.isMasuk});
+  const FormAbsensiPage({super.key, required this.isMasuk});
 
   @override
-  State<AbsensiFormPage> createState() => _AbsensiFormPageState();
+  State<FormAbsensiPage> createState() => _FormAbsensiPageState();
 }
 
-class _AbsensiFormPageState extends State<AbsensiFormPage> {
+class _FormAbsensiPageState extends State<FormAbsensiPage> {
   File? fotoSelfie;
   File? fotoAktivitas;
 

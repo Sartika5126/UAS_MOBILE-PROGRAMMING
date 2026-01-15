@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../helper/loginHelper.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 // import 'home_page.dart'; // Jangan lupa import halaman tujuanmu nanti
 
 class LoginPage extends StatefulWidget {
@@ -10,6 +12,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final storage = FlutterSecureStorage();
   // 1. Controller untuk mengambil teks inputan
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -107,7 +110,10 @@ class _LoginPageState extends State<LoginPage> {
 
                       // Cek Hasil
                       if (loginRequest != null) {
-                        if (!mounted) return; // Cek apakah halaman masih aktif
+                         await const FlutterSecureStorage().write(
+                          key: 'token',
+                          value: loginRequest.token,
+                        );// Cek apakah halaman masih aktif
 
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
@@ -115,7 +121,14 @@ class _LoginPageState extends State<LoginPage> {
                             backgroundColor: Colors.green,
                           ),
                         );
-                          Navigator.pushReplacementNamed(context, '/dashboard');
+                      Navigator.pushReplacementNamed(
+                        context,
+                        '/dashboard',
+                        arguments: {
+                          'role': loginRequest.user.role,
+                          'token': loginRequest.token,
+                        },
+                      );
 
                         // --- PINDAH HALAMAN (Navigasi) ---
                         // Navigator.pushReplacement(

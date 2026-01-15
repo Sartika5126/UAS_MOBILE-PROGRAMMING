@@ -2,7 +2,7 @@ import 'user.dart';// ignore_for_file: public_member_api_docs, sort_constructors
 import 'dart:convert';
 
 class Login {
-  final String? token;
+  final String token;
   final UserAbsen user;
 
 Login({required this.token, required this.user});

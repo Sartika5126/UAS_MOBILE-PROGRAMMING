@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http_parser/http_parser.dart';
 import 'package:http/http.dart' as http;
+import '/models/form_model.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 
@@ -62,5 +63,19 @@ class AbsensiHelper {
          return response.statusCode == 200;
 
       }
+        static Future<bool> hapus(int id) async {
+    final token = await storage.read(key: 'token');
+
+    final response = await http.delete(
+      Uri.parse("$baseUrl/delete/$id"),
+      headers: {
+        "Authorization": "Bearer $token",
+        "Content-Type": "application/json",
+      },
+    );
+
+    if (response.statusCode == 200) return true;
+    throw Exception('Gagal hapus absen: ${response.body}');
+  }
 }
 
