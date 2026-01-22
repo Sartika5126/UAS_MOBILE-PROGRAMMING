@@ -17,12 +17,16 @@ class DashboardModel {
 
   factory DashboardModel.fromJson(Map<String, dynamic> json) {
     return DashboardModel(
+<<<<<<< Updated upstream
       userId: json['userAbssenId'], 
       username: json['userAbsen'], 
       tanggal: json['riwayatAbsensi'],
       jamMasuk: json['jamMasuk'],
       jamKeluar: json['jamKeluar'],
       status: json['status'],
+=======
+      username: json['name'] ?? '',
+>>>>>>> Stashed changes
     );
   }
 }
