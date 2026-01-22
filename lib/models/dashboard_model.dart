@@ -5,7 +5,7 @@ class DashboardModel {
 
   factory DashboardModel.fromJson(Map<String, dynamic> json) {
     return DashboardModel(
-      username: json['username'] ?? 'unknown',
+      username: json['name'] ?? '',
     );
   }
 }

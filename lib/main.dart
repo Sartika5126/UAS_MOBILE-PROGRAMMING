@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-
+import 'package:intl/date_symbol_data_local.dart';
 import 'pages/loginPage.dart';
 import 'pages/dashboardPage.dart';
 import 'pages/FormAbsensiPage.dart';
 import 'pages/RiwayatAdminPage.dart';
 import 'pages/RiwayatUserPage.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await initializeDateFormatting('id_ID', null);
+
   runApp(const MyApp());
 }
 
@@ -27,16 +31,20 @@ class MyApp extends StatelessWidget {
       routes: {
         '/login': (context) => const LoginPage(),
 
-        // Dashboard butuh role dan token, jadi kita handle via arguments
         '/dashboard': (context) {
-          final args =
-              ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+          final args = ModalRoute.of(context)?.settings.arguments;
+
+          if (args == null || args is! Map<String, dynamic>) {
+            return const LoginPage();
+          }
+
           final String role = args['role'];
           final String token = args['token'];
+
           return DashboardPage(role: role, token: token);
         },
 
-        // Form Absensi juga butuh token
+
         '/formAbsensi': (context) {
           final args =
               ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
@@ -44,7 +52,6 @@ class MyApp extends StatelessWidget {
           return FormAbsensiPage(isMasuk: isMasuk);
         },
 
-        // Riwayat User/Admin
         '/riwayat': (context) {
           final args =
               ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;

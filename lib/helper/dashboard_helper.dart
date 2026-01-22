@@ -13,16 +13,22 @@ class DashboardHelper {
     Uri.parse('$baseUrl/aku'),
     headers: {
       "Authorization": "Bearer $token",
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
     },
   );
 
   if (response.statusCode == 200) {
     final data = jsonDecode(response.body);
-    if (data == null || data['user'] == null) return null;
-    return DashboardModel.fromJson(data['user']);
-  } 
-  return null;
 
+    if (data == null || data['user'] == null) {
+      return null;
+    }
+
+    return DashboardModel.fromJson(
+      data['user'] as Map<String, dynamic>,
+    );
   }
+
+  return null;
+}
 }

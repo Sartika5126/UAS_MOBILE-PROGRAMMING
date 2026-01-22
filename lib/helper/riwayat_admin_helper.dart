@@ -5,14 +5,14 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../models/riwayat_admin_model.dart';
 
-class DashboardHelper {
+class RiwayatAdminHelper {
   static const String baseUrl =
       'https://thioacetic-unreticently-saul.ngrok-free.dev/yunisafa';
   static const storage = FlutterSecureStorage();
 
   Future<List<RiwayatAdminModel>> riwayatAdminHariIni(String token) async {
     final response = await http.get(
-      Uri.parse('$baseUrl/riwayat'),
+      Uri.parse('$baseUrl/admin/riwayat-hari-ini'),
       headers: {
         "Authorization": "Bearer $token",
         "ngrok-skip-browser-warning": "true",
@@ -24,6 +24,21 @@ class DashboardHelper {
       return data.map((e) => RiwayatAdminModel.fromJson(e)).toList();
     } else {
       throw Exception('Gagal ambil riwayat admin');
+    }
+  }
+
+  // 🔥 INI NIH YANG LU CARI DARI TADI
+  Future<void> hapusRiwayatHariIni(String token) async {
+    final response = await http.delete(
+      Uri.parse('$baseUrl/admin/riwayat-hari-ini'),
+      headers: {
+        "Authorization": "Bearer $token",
+        "ngrok-skip-browser-warning": "true",
+      },
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Gagal hapus riwayat hari ini');
     }
   }
 }
